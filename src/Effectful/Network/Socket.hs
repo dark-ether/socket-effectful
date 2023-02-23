@@ -1,31 +1,15 @@
 -- |
 --  Module: Effectful.Network.Socket
---  Description: lifted System.Socket
 --
--- This module is a wrapper around Sytem.Socket conveniently re-exporting all needed values and functions.
+--  This module is a wrapper around System.Socket conveniently re-exporting all needed values and functions.
 module Effectful.Network.Socket (
   -- * Effect
   SocketE,
 
-  -- * Handler
+  -- ** Handlers
   runSocket,
-  S.Socket,
-  S.MessageFlags (..),
-  S.Family (..),
-  S.Type (..),
-  S.Protocol (..),
-  S.SocketOption (..),
-  effSetSocketOption,
-  effGetSocketOption,
-  module System.Socket.Family.Inet,
-  module System.Socket.Family.Inet6,
-  module System.Socket.Protocol.Default,
-  module System.Socket.Protocol.TCP,
-  module System.Socket.Protocol.UDP,
-  module System.Socket.Type.Datagram,
-  module System.Socket.Type.Raw,
-  module System.Socket.Type.SequentialPacket,
-  S.Stream,
+
+  -- * Operations
   socket,
   connect,
   bind,
@@ -37,6 +21,27 @@ module Effectful.Network.Socket (
   receiveFrom,
   close,
   getAddress,
+  sendAll,
+  sendAllLazy,
+  sendAllBuilder,
+  effSetSocketOption,
+  effGetSocketOption,
+
+  -- * Re-exports
+  S.Socket,
+  S.MessageFlags (..),
+  S.Family (..),
+  S.Type (..),
+  S.Protocol (..),
+  module System.Socket.Family.Inet,
+  module System.Socket.Family.Inet6,
+  module System.Socket.Protocol.Default,
+  module System.Socket.Protocol.TCP,
+  module System.Socket.Protocol.UDP,
+  module System.Socket.Type.Datagram,
+  module System.Socket.Type.Raw,
+  module System.Socket.Type.SequentialPacket,
+  S.Stream,
   S.AddressInfo (..),
   S.HasAddressInfo (..),
   S.NameInfo (..),
@@ -107,9 +112,6 @@ module Effectful.Network.Socket (
   S.eaiSocketType,
   S.eaiService,
   S.eaiSystem,
-  sendAll,
-  sendAllLazy,
-  sendAllBuilder,
 ) where
 
 import Data.ByteString (ByteString)
@@ -131,74 +133,92 @@ import System.Socket.Type.Stream (Stream)
 import System.Socket.Type.Stream qualified as S
 
 
+-- | runs the 'SocketE' Effect
 runSocket :: IOE :> es => Eff (SocketE : es) a -> Eff es a
 runSocket = evalStaticRep SocketERep
 
 
+-- | lifted 'System.Socket.socket'
 socket :: (SocketE :> es, S.Family f, S.Type t, S.Protocol p) => Eff es (S.Socket f t p)
 socket = unsafeEff_ S.socket
 
 
+-- | lifted 'System.Socket.connect'
 connect :: (SocketE :> es, S.Family f) => S.Socket f t p -> SocketAddress f -> Eff es ()
 connect sock addr = unsafeEff_ $ S.connect sock addr
 
 
+-- | lifted 'System.Socket.bind'
 bind :: (SocketE :> es, S.Family f) => S.Socket f t p -> SocketAddress f -> Eff es ()
 bind sock addr = unsafeEff_ $ S.bind sock addr
 
 
+-- | lifted 'System.Socket.listen'
 listen :: (SocketE :> es) => S.Socket f t p -> Int -> Eff es ()
 listen sock int = unsafeEff_ $ S.listen sock int
 
 
+-- | lifted 'System.Socket.accept'
 accept :: (SocketE :> es, S.Family f) => S.Socket f t p -> Eff es (S.Socket f t p, SocketAddress f)
 accept = unsafeEff_ . S.accept
 
 
+-- | lifted 'System.Socket.send'
 send :: (SocketE :> es) => S.Socket f t p -> ByteString -> S.MessageFlags -> Eff es Int
 send sock mess opts = unsafeEff_ $ S.send sock mess opts
 
 
+-- | lifted 'System.Socket.sendTo'
 sendTo :: (SocketE :> es, S.Family f) => S.Socket f t p -> ByteString -> S.MessageFlags -> SocketAddress f -> Eff es Int
 sendTo sock mess opts to = unsafeEff_ $ S.sendTo sock mess opts to
 
 
+-- | lifted 'System.Socket.receive'
 receive :: (SocketE :> es) => S.Socket f t p -> Int -> S.MessageFlags -> Eff es ByteString
 receive sock int opts = unsafeEff_ $ S.receive sock int opts
 
 
+-- | lifted 'System.Socket.receiveFrom'
 receiveFrom :: (SocketE :> es, S.Family f) => S.Socket f t p -> Int -> S.MessageFlags -> Eff es (ByteString, SocketAddress f)
 receiveFrom sock int opts = unsafeEff_ $ S.receiveFrom sock int opts
 
 
+-- | lifted 'System.Socket.close'
 close :: (SocketE :> es) => S.Socket f t p -> Eff es ()
 close = unsafeEff_ . S.close
 
 
+-- | lifted 'System.Socket.getAddress'
 getAddress :: (SocketE :> es, S.Family f) => S.Socket f t p -> Eff es (SocketAddress f)
 getAddress = unsafeEff_ . S.getAddress
 
 
+-- | lifted 'System.Socket.Type.Stream.sendAll'
 sendAll :: (SocketE :> es) => S.Socket f Stream p -> ByteString -> S.MessageFlags -> Eff es Int
 sendAll sock mess opts = unsafeEff_ $ S.sendAll sock mess opts
 
 
+-- | lifted 'System.Socket.Type.Stream.sendAllLazy'
 sendAllLazy :: (SocketE :> es) => S.Socket f Stream p -> BSL.ByteString -> S.MessageFlags -> Eff es Int64
 sendAllLazy sock mess opts = unsafeEff_ $ S.sendAllLazy sock mess opts
 
 
+-- | lifted 'System.Socket.Type.Stream.sendAllBuilder'
 sendAllBuilder :: (SocketE :> es) => S.Socket f Stream p -> Int -> Builder -> S.MessageFlags -> Eff es Int64
 sendAllBuilder sock int build opts = unsafeEff_ $ S.sendAllBuilder sock int build opts
 
 
+-- | lifted 'System.Socket.getSocketOption'
 effGetSocketOption :: (SocketE :> es, S.SocketOption o) => S.Socket f t p -> Eff es o
 effGetSocketOption sock = unsafeEff_ $ S.getSocketOption sock
 
 
+-- | lifted 'System.Socket.setSocketOption'
 effSetSocketOption :: (SocketE :> es, S.SocketOption o) => S.Socket f t p -> o -> Eff es ()
 effSetSocketOption sock opt = unsafeEff_ $ S.setSocketOption sock opt
 
 
+-- | The socket effect
 type SocketE :: Effect
 data SocketE m a
 
@@ -207,4 +227,3 @@ type instance DispatchOf SocketE = 'Static 'WithSideEffects
 
 
 data instance StaticRep SocketE = SocketERep
-

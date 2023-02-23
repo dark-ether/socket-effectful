@@ -1,6 +1,6 @@
 module Effectful.Network.Socket.Test where
 
-import Control.Monad((<=<))
+import Control.Monad ((<=<))
 import Control.Monad.Catch
 import Data.ByteString
 import Effectful
@@ -44,4 +44,3 @@ prop_car = verbose . ioProperty . ((runEff . runSocket) <=< generate . monadic')
   bs <- pick arbitrary
   prop <- run $ connectsAndReceives bs
   assert prop
-
