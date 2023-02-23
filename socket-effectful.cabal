@@ -49,7 +49,7 @@ extra-doc-files:    CHANGELOG.md
 extra-source-files: README.md
 
 common warnings
-  ghc-options:        -Wall -fplugin=Effectful.Plugin -threaded
+  ghc-options:        -Wall -fplugin=Effectful.Plugin
   build-depends:
     , base
     , bytestring
@@ -90,6 +90,7 @@ library
 test-suite tests
   -- Import common warning flags.
   import:             warnings
+  ghc-options: -threaded
   type:               exitcode-stdio-1.0
 
   -- .hs or .lhs file containing the Main module.

@@ -1,6 +1,6 @@
 module Effectful.Network.Socket.Test where
 
-import Control.Monad (join)
+import Control.Monad((<=<))
 import Control.Monad.Catch
 import Data.ByteString
 import Effectful
@@ -8,8 +8,6 @@ import Effectful.Network.Socket
 import Test.QuickCheck
 import Test.QuickCheck.Instances.ByteString ()
 import Test.QuickCheck.Monadic
-import Test.Tasty
-import Test.Tasty.QuickCheck
 
 
 connectsAndReceives :: ByteString -> SocketE :> es => Eff es Bool
@@ -42,9 +40,8 @@ connectsAndReceives message = do
 
 
 prop_car :: Property
-prop_car = verbose . ioProperty . join . fmap (runEff . runSocket) . generate . monadic' $ do
+prop_car = verbose . ioProperty . ((runEff . runSocket) <=< generate . monadic') $ do
   bs <- pick arbitrary
   prop <- run $ connectsAndReceives bs
   assert prop
-
 
