@@ -37,7 +37,8 @@
         treefmt.config = {
           programs = {
             cabal-fmt.enable = true;
-            hlint.enable = true;
+            ormolu.enable = true;
+            ormolu.package = pkgs.haskellPackages.fourmolu;
           };
           projectRootFile = "flake.nix";
         };

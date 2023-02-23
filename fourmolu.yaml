@@ -1,0 +1,13 @@
+indentation: 2
+function-arrows: trailing
+comma-style: leading
+import-export-style: diff-friendly
+indent-wheres: false
+record-brace-space: true
+newlines-between-decls: 2
+haddock-style: single-line
+haddock-style-module: multiline
+let-sytle: mixed
+in-style: left-align
+unicode: never
+respectful: false

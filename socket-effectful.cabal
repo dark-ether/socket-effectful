@@ -49,7 +49,7 @@ extra-doc-files:    CHANGELOG.md
 extra-source-files: README.md
 
 common warnings
-  ghc-options:        -Wall -fplugin=Effectful.Plugin
+  ghc-options:        -Wall -fplugin=Effectful.Plugin -threaded
   build-depends:
     , base
     , bytestring
@@ -60,11 +60,11 @@ common warnings
   default-extensions:
     DataKinds
     GADTs
+    OverloadedStrings
     PartialTypeSignatures
     ScopedTypeVariables
     StandaloneKindSignatures
     TypeFamilies
-    OverloadedStrings
 
 library
   -- Import common warning flags.
@@ -103,12 +103,12 @@ test-suite tests
 
   -- Other library packages from which modules are imported.
   build-depends:
+    , exceptions
     , QuickCheck
+    , quickcheck-instances
     , socket-effectful
     , tasty
     , tasty-quickcheck
-    , exceptions
-    , quickcheck-instances
 
   build-tool-depends: tasty-discover:tasty-discover
 
