@@ -28,11 +28,12 @@ module Effectful.Network.Socket (
   effGetSocketOption,
 
   -- * Re-exports
+  -- ** Basics
   S.Socket,
-  S.MessageFlags (..),
   S.Family (..),
   S.Type (..),
   S.Protocol (..),
+  -- ** Concrete Types
   module System.Socket.Family.Inet,
   module System.Socket.Family.Inet6,
   module System.Socket.Protocol.Default,
@@ -42,16 +43,20 @@ module Effectful.Network.Socket (
   module System.Socket.Type.Raw,
   module System.Socket.Type.SequentialPacket,
   S.Stream,
+  -- ** Helper Types
   S.AddressInfo (..),
   S.HasAddressInfo (..),
   S.NameInfo (..),
   S.SocketOption (..),
+  S.MessageFlags (..),
   S.Error (..),
   S.ReuseAddress (..),
   S.KeepAlive (..),
   S.msgNoSignal,
   S.msgPeek,
+  -- ** Address Info Flags
   S.AddressInfoFlags,
+  -- *** Types of flags
   S.aiAddressConfig,
   S.aiAll,
   S.aiCanonicalName,
@@ -59,13 +64,17 @@ module Effectful.Network.Socket (
   S.aiNumericService,
   S.aiPassive,
   S.aiV4Mapped,
+  -- ** Name Info Flags
   S.NameInfoFlags,
+  -- *** Types of Flags
   S.niNameRequired,
   S.niDatagram,
   S.niNoFullyQualifiedDomainName,
   S.niNumericHost,
   S.niNumericService,
+  -- ** Socket Exceptions
   S.SocketException,
+  -- *** Types of Socket Exceptions
   S.eOk,
   S.eInterrupted,
   S.eBadFileDescriptor,
@@ -102,7 +111,9 @@ module Effectful.Network.Socket (
   S.eHostUnreachable,
   S.eAlready,
   S.eInProgress,
+  -- ** Address Infp Exceptions
   S.AddressInfoException,
+  -- *** Types of Address Info Exceptions
   S.eaiAgain,
   S.eaiBadFlags,
   S.eaiFail,
